@@ -1,0 +1,147 @@
+# AquaVisionaries class rules — EDITABLE by the operator.
+#
+# These rules only affect the *priority ranking* shown in the UI/report.
+# They never hide or delete a detection. Every machine result stays
+# "Needs operator review" until a human confirms or rejects it.
+#
+# category: rule-based potential category of the *object type* the class name
+# describes (Potentially harmful / Potentially harmless / Potentially
+# useful-recoverable / Unknown - operator review required). It is general
+# guidance about that kind of object, NOT a finding about this specific item:
+# sonar cannot confirm material, condition or contents. Each category states
+# its reason and source. Edit freely; unknown classes fall back to
+# "Unknown - operator review required".
+version: 1
+
+priority:
+  high_threshold: 0.70          # score >= this -> high
+  medium_threshold: 0.45        # score >= this -> medium, else low
+  review_below_confidence: 0.50 # extra review reason below this confidence
+  unknown_class_weight: 1.0
+  shadow_support_bonus: 0.0     # e.g. 0.05 to reward a measured acoustic shadow (heuristic, off by default)
+
+signals:
+  shadow:
+    shadow_ratio_threshold: 0.60   # behind-object median / neighbouring median below this => "shadow present"
+    dark_fraction_threshold: 0.50  # OR: share of the box far-half darker than threshold x neighbouring median
+    shadow_length_factor: 1.0      # sampled shadow length = factor x box diagonal
+    min_region_pixels: 30
+  unexplained_returns:
+    enabled: true
+    percentile: 99.5
+    mad_k: 6.0
+    min_area_px: 25
+    min_area_fraction: 0.0002
+    max_items: 5
+
+classes:
+  Bottle:
+    group: Container
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Discarded bottles are commonly plastic or glass; plastic debris persists and fragments into microplastics. Material cannot be confirmed from sonar.
+    category_source: UNEP, "From Pollution to Solution" (2021) - general marine plastic litter assessment
+    operator_guidance: Confirm the object is a bottle and note whether it can be recovered.
+    hazard: Needs operator review
+    recyclability: Needs operator review (material unknown from sonar)
+    source: class name (dataset data.yaml)
+  Shampoo-bottle:
+    group: Container
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Shampoo bottles are typically plastic; plastic debris persists and fragments into microplastics.
+    category_source: UNEP, "From Pollution to Solution" (2021)
+    operator_guidance: Confirm identity; plastic containers are usually recovery candidates.
+    hazard: Needs operator review
+    recyclability: Needs operator review (material unknown from sonar)
+    source: class name (dataset data.yaml)
+  Standing-bottle:
+    group: Container
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Same object type as Bottle (upright orientation); plastic or glass debris.
+    category_source: UNEP, "From Pollution to Solution" (2021)
+    operator_guidance: Confirm identity and orientation.
+    hazard: Needs operator review
+    recyclability: Needs operator review (material unknown from sonar)
+    source: class name (dataset data.yaml)
+  Drink-carton:
+    group: Container
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Drink cartons are multi-layer paperboard/plastic/aluminium laminates that do not readily degrade in water.
+    category_source: General packaging composition; operator to verify
+    operator_guidance: Confirm identity; usually a recovery candidate.
+    hazard: Needs operator review
+    recyclability: Needs operator review (material unknown from sonar)
+    source: class name (dataset data.yaml)
+  Can:
+    group: Container
+    class_weight: 1.0
+    category: Potentially useful / recoverable
+    category_reason: Beverage cans are usually aluminium or steel, which are widely recyclable once recovered.
+    category_source: General material recycling practice; material not confirmed by sonar
+    operator_guidance: Confirm identity; metal cans are recovery candidates.
+    hazard: Needs operator review
+    recyclability: Needs operator review (material unknown from sonar)
+    source: class name (dataset data.yaml)
+  Hook:
+    group: Marine hardware
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Lost fishing gear, including hooks, is a documented cause of wildlife entanglement and injury.
+    category_source: NOAA Marine Debris Program - derelict fishing gear
+    operator_guidance: Treat as a snag/injury hazard for divers; confirm before recovery.
+    hazard: Needs operator review
+    recyclability: Needs operator review
+    source: class name (dataset data.yaml)
+  Chain:
+    group: Marine hardware
+    class_weight: 1.0
+    category: Potentially useful / recoverable
+    category_reason: Chain is usually steel mooring or anchor hardware that can be salvaged; it may also be in use.
+    category_source: Class name; operator to verify whether the chain is still in service
+    operator_guidance: Check whether it is part of an active mooring before any removal.
+    hazard: Needs operator review
+    recyclability: Needs operator review
+    source: class name (dataset data.yaml)
+  Propeller:
+    group: Marine hardware
+    class_weight: 1.0
+    category: Potentially useful / recoverable
+    category_reason: Propellers are typically bronze, stainless or aluminium parts with salvage value.
+    category_source: Class name; material not confirmed by sonar
+    operator_guidance: Confirm identity; possible salvage item.
+    hazard: Needs operator review
+    recyclability: Needs operator review
+    source: class name (dataset data.yaml)
+  Valve:
+    group: Marine hardware
+    class_weight: 1.0
+    category: Potentially useful / recoverable
+    category_reason: Valves are usually metal fittings with salvage value; may belong to installed infrastructure.
+    category_source: Class name; operator to verify it is not installed equipment
+    operator_guidance: Check it is loose debris, not part of a pipeline or installation.
+    hazard: Needs operator review
+    recyclability: Needs operator review
+    source: class name (dataset data.yaml)
+  Tire:
+    group: Large debris
+    class_weight: 1.0
+    category: Potentially harmful
+    category_reason: Tyre leachates such as 6PPD-quinone have been shown to be toxic to some fish species.
+    category_source: Tian et al., Science 371 (2021) 185-189
+    operator_guidance: Large object; plan recovery with appropriate lifting equipment.
+    hazard: Needs operator review
+    recyclability: Needs operator review
+    source: class name (dataset data.yaml)
+  Wall:
+    group: Structure (not debris)
+    class_weight: 0.3
+    category: Potentially harmless
+    category_reason: A wall or structural boundary is part of the environment, not a debris item.
+    category_source: Class name; weight lowered so it ranks below debris (editable)
+    operator_guidance: Usually no action; confirm it is structure and not a large debris item.
+    hazard: Not debris - structure/boundary
+    recyclability: Not applicable
+    source: class name indicates a wall/structure rather than a debris item

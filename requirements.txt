@@ -1,0 +1,12 @@
+# Streamlit Community Cloud dependencies for app.py (the file Streamlit runs).
+# CPU-only PyTorch keeps the install small; Streamlit Cloud has no GPU.
+# The full React + FastAPI console uses requirements-console.txt instead.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+torchvision
+ultralytics>=8.3,<9.0
+opencv-python-headless>=4.8
+streamlit>=1.35
+numpy>=1.26
+Pillow>=10,<13
+PyYAML>=6,<7
